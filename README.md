@@ -7,7 +7,8 @@ npm i
 ```js
 npm start
 ```
-均位于路由localhost:8000下面
+页面位于路由localhost:8000下面
+
 3. 能正常运行之后对其打包
 ```js
 npm run build
