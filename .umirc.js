@@ -1,4 +1,4 @@
-
+const getRelPath = path => __dirname + path
 // ref: https://umijs.org/config/
 export default {
   treeShaking: true,
@@ -8,7 +8,7 @@ export default {
       antd: true,
       dva: true,
       dynamicImport: false,
-      title: 'acmform',
+      title: '2019ACM俱乐部报名表单',
       dll: false,
       
       routes: {
@@ -22,4 +22,7 @@ export default {
       },
     }],
   ],
+  alias:{
+    utils: getRelPath('/src/utils')
+  }
 }

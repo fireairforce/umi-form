@@ -1,22 +1,26 @@
 import React from 'react'
 import axios from 'axios'
-import {  Col, Form, Input,Row,Cascader ,Radio } from 'antd'
+import {  Col, Form, Input,Row,Cascader ,Radio,Select } from 'antd'
 import {　Modal,Button　} from 'antd-mobile'
-import verity from '../../utils/regex'
-import Options from '../../utils/Options'
+import verity from 'utils/regex'
+import Options from 'utils/Options'
 import styles from './index.less'
 const FormItem = Form.Item
 const RadioGroup = Radio.Group
+const Option = Select.Option
 class Home extends React.Component {
   constructor (props) {
     super(props)
     this.state = {
       loading: false,
       submitted: false,
-      showModal:false
+      showModal:false,
+      title:'工程创新实训班',
+      value:'jishu'
     }
-    this.handleReset = this.handleReset.bind(this);
-    this.handleSubmit = this.handleSubmit.bind(this);
+    this.handleReset = this.handleReset.bind(this)
+    this.handleSubmit = this.handleSubmit.bind(this)
+    this.handleSelect = this.handleSelect.bind(this)
   }
 
   handleReset () {
@@ -24,10 +28,30 @@ class Home extends React.Component {
     this.props.form.resetFields()
   }
 
+   handleSelect(value){
+      if(value === 'jishu'){
+        this.setState({
+          title:'工程创新实训班',
+          value
+        })
+      }else if(value === 'jingsai'){
+        this.setState({
+          title:'ccpc/icpc竞赛实训班',
+          value
+        })
+      }else{
+        this.setState({
+          title:'程序设计精英',
+          value
+        })
+      }
+   }
+
   handleSubmit(){
+      const { value } = this.state;
       this.setState({ loading:true })
-      let value = this.props.form.getFieldsValue();
-      const {xm,xb,zy,xh,bj,bjxlh,sjh,qq} = value;
+      let data = this.props.form.getFieldsValue();
+      const {xm,xb,zy,xh,bj,bjxlh,sjh,qq} = data;
       const content = {
         name:xm,
         sex:xb==='1'?'男':'女',
@@ -38,7 +62,7 @@ class Home extends React.Component {
         mobile:sjh,
         QQ:qq
       }
-      axios.post(`http://test.ela.moe/baoming/${this.props.match.params.id}`,{
+      axios.post(`http://test.ela.moe/baoming/${value}`,{
           ...content
       }).then(res=>{
         if(res.status===200){
@@ -54,8 +78,7 @@ class Home extends React.Component {
 
   render () {
     const { getFieldDecorator } = this.props.form
-    const { match } = this.props;
-
+    const { title,value } = this.state;
     const formItemLayout = {
       labelCol: {
         xs: {span: 24},
@@ -66,7 +89,6 @@ class Home extends React.Component {
         sm: {span: 12}
       }
     }
-    let str = match.params.id === 'jingsai'?'ccpc/icpc竞赛实训班':'工程创新实训班'
     return (
        <div className={styles.wrapper}>
         <div className={styles.App}>
@@ -76,11 +98,29 @@ class Home extends React.Component {
         </div> 
         <div className={styles.bgc}>
         <div className={styles.header}>
-           <h2>{`${str}报名表`}</h2>
+           <h2>{`${title}报名表`}</h2>
         </div>
         <div className={styles.content}>
+          
+          <Form layout="inline" >
+          <div className={styles.list}>
+              <FormItem>
+              {
+                    <Select
+                    style={{width:"46vw",marginBottom:"20px"}}
+                    placeholder="全部部门"
+                    defaultValue="code"
+                >
+                  <Option value="code" onClick={()=>{this.handleSelect('jishu')}}>工程创新实训班</Option>
+                  <Option value="codelover" onClick={()=>{this.handleSelect('jingsai')}}>ccpc/icpc竞赛实训班</Option>
+                  <Option value="codemachine" onClick={()=>{this.handleSelect('shengsai')}}>程序设计精英</Option>   
+                </Select>
+              } 
+              </FormItem>   
+              </div>
+          </Form>
+          
          <Form 
-           onSubmit={this.handleSubmit}
          >
                  <FormItem
                     label='姓名'
@@ -157,7 +197,7 @@ class Home extends React.Component {
                       {getFieldDecorator('bjxlh', {
                             rules: [{ required: true,message: '请填写您的班级序列号' }],
                       })(
-                          <Input placeholder="请填写您的班级,例如18" />
+                          <Input placeholder="请填写您的班级序列号" />
                       )}
                 </FormItem>
 
@@ -230,7 +270,7 @@ class Home extends React.Component {
           wrapProps={{ onTouchStart: this.onWrapTouchStart }}
         >
           <div style={{ height: 100, overflow: 'scroll' }}>
-                {match.params.id === 'jingsai'?<img src="http://wdlj.zoomdong.xin/acmicpc.jpg" alt="acm" style={{width:'120px',height:'90px'}}/>:<img src="http://wdlj.zoomdong.xin/acmclub-logo.jpg" alt="gc" style={{width:'80px',height:'80px'}}/>}
+                {value=== 'jishu'?<img src="http://wdlj.zoomdong.xin/acmclub-logo.jpg" alt="gc" style={{width:'80px',height:'80px'}}/>:<img src="http://wdlj.zoomdong.xin/acmicpc.jpg" alt="acm" style={{width:'120px',height:'90px'}}/>}
                 <p style={{textAlign:"center" ,fontSize:'18px'}}>请等待后续通知</p>
           </div>
         </Modal>
