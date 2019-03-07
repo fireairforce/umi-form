@@ -7,8 +7,7 @@ npm i
 ```js
 npm start
 ```
-localhost:8000/jishu
-localhost:8000/jingsai
+均位于路由localhost:8000下面
 3. 能正常运行之后对其打包
 ```js
 npm run build
