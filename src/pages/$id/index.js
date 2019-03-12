@@ -1,6 +1,6 @@
 import React from 'react'
 import axios from 'axios'
-import {  Col, Form, Input,Row,Cascader ,Radio } from 'antd'
+import {  Col, Form, Input, Row, Cascader ,Radio } from 'antd'
 import {　Modal,Button　} from 'antd-mobile'
 import verity from 'utils/regex'
 import Options from 'utils/Options'
@@ -56,7 +56,7 @@ class Home extends React.Component {
       })
     }else if(value === 'jingsai'){
       this.setState({
-        title:'ccpc/icpc竞赛实训班',
+        title:'CCPC/ICPC竞赛实训班',
         value
       })
     }else{
@@ -67,14 +67,22 @@ class Home extends React.Component {
     }
    }
 
-  handleSubmit(){
+   async handleSubmit(){
       const { value } = this.state;
+      let data = {};
+      this.props.form.validateFields((err, values) => {
+        if (!err) {
+         data = values
+        }
+      })
+      if(!Object.values(data).length){
+         return
+      }
       this.setState({ loading:true })
-      let data = this.props.form.getFieldsValue();
-      const {xm,xb,zy,xh,bj,bjxlh,sjh,qq} = data;
+      const {xm,xb,zy=[],xh,bj,bjxlh,sjh,qq} = data;
       const content = {
         name:xm,
-        sex:xb==='1'?'男':'女',
+        sex:xb===1?'男':'女',
         "school/major":zy,
         studentNumber:xh,
         class:bj,
@@ -82,18 +90,16 @@ class Home extends React.Component {
         mobile:sjh,
         QQ:qq
       }
-      axios.post(`http://test.ela.moe/baoming/${value}`,{
+     const res = await axios.post(`http://test.ela.moe/baoming/${value}`,{
           ...content
-      }).then(res=>{
-        if(res.status===200){
-          this.setState({
-            loading:false,
-            submitted:true,
-            showModal:true
-          })
-        }
       })
-     
+      if(res.status===200){
+        this.setState({
+          loading:false,
+          submitted:true,
+          showModal:true
+        })
+      }
   }
 
   render () {
